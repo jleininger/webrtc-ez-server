@@ -7,7 +7,8 @@
     "start": "deno run --allow-env --env-file --allow-net src/index.ts",
     "start:dev": "deno run --allow-env --env-file --allow-net --watch src/index.ts",
     "start:docker": "docker compose up",
-    "build:docker": "docker build --platform linux/amd64,linux/arm64 -t jadonl/signaling-server ."
+    "build:docker": "docker build --platform linux/amd64,linux/arm64 -t jadonl/signaling-server .",
+    "test": "deno test --allow-env --allow-net --allow-read --allow-write src/"
   },
   "keywords": [
     "WebRTC",
