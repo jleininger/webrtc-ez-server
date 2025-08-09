@@ -4,11 +4,11 @@
   "description": "Deno server webrtc-ez Godot plugin.",
   "main": "src/index.ts",
   "scripts": {
-    "start": "deno run --allow-env --env-file --allow-net src/index.ts",
+    "start": "deno run --allow-env --env-file --allow-net=0.0.0.0:9080 src/index.ts",
     "start:dev": "deno run --allow-env --env-file --allow-net --watch src/index.ts",
     "start:docker": "docker compose up",
     "build:docker": "docker build --platform linux/amd64,linux/arm64 -t jadonl/signaling-server .",
-    "test": "deno test --allow-env --allow-net --allow-read --allow-write src/"
+    "test": "deno test --allow-env --allow-net=0.0.0.0:9080 --allow-read --allow-write src/"
   },
   "keywords": [
     "WebRTC",
