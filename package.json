@@ -6,9 +6,10 @@
   "scripts": {
     "start": "deno run --allow-env --env-file --allow-net=0.0.0.0:9080 src/index.ts",
     "start:dev": "deno run --allow-env --env-file --allow-net --watch src/index.ts",
+    "start:test": "deno run --allow-env --env-file=.env.test --allow-net=0.0.0.0:9080 src/index.ts",
     "start:docker": "docker compose up",
     "build:docker": "docker build --platform linux/amd64,linux/arm64 -t jadonl/signaling-server .",
-    "test": "deno test --allow-env --allow-net=0.0.0.0:9080 --allow-read --allow-write src/"
+    "test": "deno test --allow-env --env-file=.env.test --allow-net=localhost:9080 --allow-read --allow-write src/"
   },
   "keywords": [
     "WebRTC",

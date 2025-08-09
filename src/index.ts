@@ -9,11 +9,20 @@ import { Message } from "./utils/createMessage.ts";
 import { createMessage, log, logError } from "./utils/index.ts";
 
 const PORT = Deno.env.get("PORT") ?? "9080";
+const MAX_LOBBIES = parseInt(Deno.env.get("MAX_LOBBIES") ?? "8");
 const wss = new WebSocketServer(parseInt(PORT));
 const lobbies = new Map<string, Lobby>();
 
 function joinLobby(peer: Peer, lobbyId: string) {
   if (lobbyId === "") {
+    if (lobbies.size >= MAX_LOBBIES) {
+      logError("Max lobbies reached!");
+      peer.sendMessage(
+        createMessage(MessageType.ERROR, peer.id, "No Available Lobbies. Please try again.")
+      );
+      return;
+    }
+
     const lobby = new Lobby(peer.id);
     lobby.join(peer);
     lobbies.set(lobby.id, lobby);
