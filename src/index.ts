@@ -10,6 +10,7 @@ import { createMessage, log, logError } from "./utils/index.ts";
 
 const PORT = Deno.env.get("PORT") ?? "9080";
 const MAX_LOBBIES = parseInt(Deno.env.get("MAX_LOBBIES") ?? "8");
+const MAX_PEERS = parseInt(Deno.env.get("MAX_PEERS") ?? "8");
 const wss = new WebSocketServer(parseInt(PORT));
 const lobbies = new Map<string, Lobby>();
 
@@ -23,7 +24,7 @@ function joinLobby(peer: Peer, lobbyId: string) {
       return;
     }
 
-    const lobby = new Lobby(peer.id);
+    const lobby = new Lobby(peer.id, MAX_PEERS);
     lobby.join(peer);
     lobbies.set(lobby.id, lobby);
     log(`Player: ${peer.id} created lobby with id: ${lobby.id}`);
