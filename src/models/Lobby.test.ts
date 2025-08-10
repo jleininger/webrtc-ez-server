@@ -48,6 +48,29 @@ Deno.test("Lobby.join adds peer, sets lobbyId, and sends messages", () => {
   expect(lobby.peers.length).toBe(1);
   expect(peer1.lobbyId).toBe(lobby.id);
 
+Deno.test("Lobby sends 'full' message when maxPeers is reached", () => {
+  const maxPeers = 2;
+  const lobby = new Lobby(1, maxPeers);
+  
+  const peer1 = new MockPeer(1);
+  const peer2 = new MockPeer(2);
+  const peer3 = new MockPeer(3);
+
+  lobby.join(peer1);
+  lobby.join(peer2);
+  
+  lobby.join(peer3);
+
+  expect(peer3.sentMessages.length).toBe(1);
+  expect(peer3.sentMessages[0]).toEqual({
+    type: MessageType.ERROR,
+    peerId: peer3.id,
+    data: "Lobby is full."
+  });
+  
+  expect(lobby.peers.length).toBe(maxPeers);
+});
+
   lobby.join(peer2);
   expect(lobby.peers.length).toBe(2);
   expect(peer2.lobbyId).toBe(lobby.id);

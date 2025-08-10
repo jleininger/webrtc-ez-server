@@ -8,8 +8,9 @@ export default class Lobby {
   id: string;
   host: number;
   peers: Peer[];
+  maxPeers: number;
 
-  constructor(host: number) {
+  constructor(host: number, maxPeers: number = 8) {
     const nanoid = customAlphabet(
       "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
       5
@@ -17,6 +18,7 @@ export default class Lobby {
     this.id = nanoid();
     this.host = host;
     this.peers = [];
+    this.maxPeers = maxPeers;
   }
 
   getPeerId(peer: Peer) {
@@ -28,6 +30,13 @@ export default class Lobby {
   }
 
   join(peer: Peer) {
+    if (this.peers.length >= this.maxPeers) {
+      peer.sendMessage(
+        createMessage(MessageType.ERROR, peer.id, "Lobby is full.")
+      );
+      return;
+    }
+
     const assignedId = this.getPeerId(peer);
     peer.sendMessage(
       createMessage(MessageType.LOBBY_JOINED, assignedId, this.id)
