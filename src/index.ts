@@ -15,11 +15,17 @@ const wss = new WebSocketServer(parseInt(PORT));
 const lobbies = new Map<string, Lobby>();
 
 function joinLobby(peer: Peer, lobbyId: string) {
+  cleanUpInactiveLobbies();
+
   if (lobbyId === "") {
     if (lobbies.size >= MAX_LOBBIES) {
       logError("Max lobbies reached!");
       peer.sendMessage(
-        createMessage(MessageType.ERROR, peer.id, "No Available Lobbies. Please try again.")
+        createMessage(
+          MessageType.ERROR,
+          peer.id,
+          "No Available Lobbies. Please try again."
+        )
       );
       return;
     }
@@ -65,6 +71,15 @@ function removeFromLobby(lobbyId: string, peerId: number) {
   } else {
     log(`Peer with id: ${peerId} not found in lobby!`);
   }
+}
+
+function cleanUpInactiveLobbies() {
+  lobbies.forEach((lobby, id) => {
+    if (!lobby.isActive()) {
+      log(`Cleaning up inactive lobby: ${id}`);
+      lobbies.delete(id);
+    }
+  });
 }
 
 function parseMessage(peer: Peer, message: string) {
