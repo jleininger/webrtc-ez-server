@@ -29,6 +29,10 @@ export default class Lobby {
     return this.peers.find((p) => p.id === id);
   }
 
+  isActive() {
+    return this.peers.length > 0 && !this.peers.every((p) => p.isClosed);
+  }
+
   join(peer: Peer) {
     if (this.peers.length >= this.maxPeers) {
       peer.sendMessage(

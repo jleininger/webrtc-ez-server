@@ -20,4 +20,8 @@ export default class Peer {
   close() {
     this.socket.close(0);
   }
+
+  get isClosed() {
+    return this.socket.isClosed;
+  }
 }
