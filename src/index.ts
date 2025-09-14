@@ -83,34 +83,41 @@ function cleanUpInactiveLobbies() {
 }
 
 function parseMessage(peer: Peer, message: string) {
-  const { type, id, data } = JSON.parse(message) as Message;
+  try {
+    const { type, id, data } = JSON.parse(message) as Message;
 
-  switch (type) {
-    case MessageType.JOIN_LOBBY:
-      joinLobby(peer, data);
-      break;
-    case MessageType.LEAVE_LOBBY:
-      leaveLobby(peer);
-      break;
-    case MessageType.REMOVE_PLAYER:
-      removeFromLobby(data, id);
-      break;
-    case MessageType.OFFER:
-    case MessageType.ANSWER:
-    case MessageType.CANDIDATE:
-      {
-        const lobby = lobbies.get(peer.lobbyId);
-        if (lobby) {
-          const destId = id === 1 ? lobby.host : id;
-          const destPeer = lobby.getPeer(destId);
-          destPeer?.sendMessage(
-            createMessage(type, lobby.getPeerId(peer), data)
-          );
+    switch (type) {
+      case MessageType.JOIN_LOBBY:
+        joinLobby(peer, data);
+        break;
+      case MessageType.LEAVE_LOBBY:
+        leaveLobby(peer);
+        break;
+      case MessageType.REMOVE_PLAYER:
+        removeFromLobby(data, id);
+        break;
+      case MessageType.OFFER:
+      case MessageType.ANSWER:
+      case MessageType.CANDIDATE:
+        {
+          const lobby = lobbies.get(peer.lobbyId);
+          if (lobby) {
+            const destId = id === 1 ? lobby.host : id;
+            const destPeer = lobby.getPeer(destId);
+            destPeer?.sendMessage(
+              createMessage(type, lobby.getPeerId(peer), data)
+            );
+          }
         }
-      }
-      break;
-    default:
-      logError("Error: Invalid message type");
+        break;
+      case MessageType.PING:
+        log(`Received PING from peer ${peer.id}`);
+        break;
+      default:
+        logError("Error: Invalid message type", type);
+    }
+  } catch (error) {
+    logError("Error parsing message:", error);
   }
 }
 
