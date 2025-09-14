@@ -10,5 +10,6 @@ export enum MessageType {
   OFFER,
   ANSWER,
   CANDIDATE,
-  ERROR
+  ERROR,
+  PING
 }
