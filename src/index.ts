@@ -24,8 +24,8 @@ function joinLobby(peer: Peer, lobbyId: string) {
         createMessage(
           MessageType.ERROR,
           peer.id,
-          "No Available Lobbies. Please try again."
-        )
+          "No Available Lobbies. Please try again.",
+        ),
       );
       return;
     }
@@ -43,7 +43,7 @@ function joinLobby(peer: Peer, lobbyId: string) {
     } else {
       logError("lobby does not exist!");
       peer.sendMessage(
-        createMessage(MessageType.ERROR, peer.id, "Lobby ID invalid")
+        createMessage(MessageType.ERROR, peer.id, "Lobby ID invalid"),
       );
     }
   }
@@ -105,7 +105,7 @@ function parseMessage(peer: Peer, message: string) {
             const destId = id === 1 ? lobby.host : id;
             const destPeer = lobby.getPeer(destId);
             destPeer?.sendMessage(
-              createMessage(type, lobby.getPeerId(peer), data)
+              createMessage(type, lobby.getPeerId(peer), data),
             );
           }
         }
