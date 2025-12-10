@@ -4,8 +4,7 @@ import { createMessage } from "../utils/createMessage.ts";
 import Peer from "./Peer.ts";
 
 const CUSTOM_ALPHABET =
-  Deno.env.get("CUSTOM_ALPHABET") ??
-  "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  Deno.env.get("CUSTOM_ALPHABET") ?? "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export default class Lobby {
   static HOST_ID = 1;
