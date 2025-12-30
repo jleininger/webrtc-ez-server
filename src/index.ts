@@ -54,6 +54,7 @@ function leaveLobby(peer: Peer) {
   lobbyToLeave?.remove(peer);
   if (lobbyToLeave?.getPeerId(peer) === Lobby.HOST_ID) {
     log("host left lobby, closing...", lobbyToLeave.id);
+    lobbyToLeave.close();
     lobbies.delete(lobbyToLeave.id);
   }
 }

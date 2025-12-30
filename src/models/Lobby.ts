@@ -67,4 +67,10 @@ export default class Lobby {
       createMessage(MessageType.LOBBY_LEFT, assignedId, this.id),
     );
   }
+
+  close() {
+    this.peers.forEach((p) => {
+      p.sendMessage(createMessage(MessageType.LOBBY_LEFT, p.id, this.id));
+    });
+  }
 }
