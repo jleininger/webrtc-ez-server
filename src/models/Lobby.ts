@@ -3,6 +3,9 @@ import { MessageType } from "../types/messageType.ts";
 import { createMessage } from "../utils/createMessage.ts";
 import Peer from "./Peer.ts";
 
+const CUSTOM_ALPHABET =
+  Deno.env.get("CUSTOM_ALPHABET") ?? "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
 export default class Lobby {
   static HOST_ID = 1;
   id: string;
@@ -11,10 +14,7 @@ export default class Lobby {
   maxPeers: number;
 
   constructor(host: number, maxPeers: number = 8) {
-    const nanoid = customAlphabet(
-      "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-      5
-    );
+    const nanoid = customAlphabet(CUSTOM_ALPHABET, 5);
     this.id = nanoid();
     this.host = host;
     this.peers = [];
@@ -36,19 +36,19 @@ export default class Lobby {
   join(peer: Peer) {
     if (this.peers.length >= this.maxPeers) {
       peer.sendMessage(
-        createMessage(MessageType.ERROR, peer.id, "Lobby is full.")
+        createMessage(MessageType.ERROR, peer.id, "Lobby is full."),
       );
       return;
     }
 
     const assignedId = this.getPeerId(peer);
     peer.sendMessage(
-      createMessage(MessageType.LOBBY_JOINED, assignedId, this.id)
+      createMessage(MessageType.LOBBY_JOINED, assignedId, this.id),
     );
     this.peers.forEach((p) => {
       p.sendMessage(createMessage(MessageType.PEER_CONNECTED, assignedId));
       peer.sendMessage(
-        createMessage(MessageType.PEER_CONNECTED, this.getPeerId(p))
+        createMessage(MessageType.PEER_CONNECTED, this.getPeerId(p)),
       );
     });
     peer.lobbyId = this.id;
@@ -64,7 +64,13 @@ export default class Lobby {
       p.sendMessage(createMessage(MessageType.PEER_DISCONNECTED, assignedId));
     });
     peer.sendMessage(
-      createMessage(MessageType.LOBBY_LEFT, assignedId, this.id)
+      createMessage(MessageType.LOBBY_LEFT, assignedId, this.id),
     );
+  }
+
+  close() {
+    this.peers.forEach((p) => {
+      p.sendMessage(createMessage(MessageType.LOBBY_LEFT, p.id, this.id));
+    });
   }
 }
